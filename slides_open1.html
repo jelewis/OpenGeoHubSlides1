@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Coding Machine Learning Models with R</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="John Lewis" />
+    <link href="slides_open1_files/remark-css/default.css" rel="stylesheet" />
+    <link href="slides_open1_files/remark-css/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Coding Machine Learning Models with R
+## Meet Tidymodels
+### John Lewis
+### 2020/04/08 (updated: 2020-08-11)
+
+---
+
+class:center
+
+
+&lt;img class="circle" src="images/tidymodels_hex.png" width="450"/&gt;
+####These slides and a pdf file can be found at (github.com/jelewis and repository:OpenGeoHubSlides1)
+
+
+---
+
+## .center[Why Tidymodels??]
+
+Fundamentally, tidymodels is an ecosystem of packages which is specifically designed with common APIs and a shared philosophy.
+
+--
+
+R has a consistency problem. Since everything was made by different people and using different principles, everything has a slightly different interface, and trying to keep everything in line can be frustrating. Therefore, to circumvent this problem 'tidymodels' was created by Max Kuhn at R Studio.
+
+--
+
+So the 'tidymodels' package is an integrated, modular, extendable set of packages that implement a framework that facilitates creating predicative statistical models. It adhere to tidyverse syntax and design principles that promote consistency and well-designed human interfaces over the speed of code execution. 
+
+--
+
+However, it has built-in capabilities for parallel execution tasks to help with  resampling, cross validation and parameter tuning. 'Tidymodels' works through the steps of the basic ML modelling and implements conceptual structures that make complex iterative workflows possible and reproducible.     
+
+*Paraphrased from: Joseph Rickert R Views 2020-04-21
+
+
+---
+class: center, middle
+
+ ##  Who am I?
+ ## *John Lewis*
+ ##  McGill University Professor (retired)
+
+&lt;img class="circle" src="images/Lewis.jpg" width="150px"/&gt;
+
+#### "Github" &lt;http://github.com/jelewis&gt; 
+#### "email"  &lt;jelewis02@gmail.com&gt;
+
+
+
+&lt;!--background-image: ![background] ("images/tidymodels_hex.png")--&gt;
+
+---
+
+## What is Machine Learning or the World of AI?
+&lt;img src="images/7vw.jpg" width="80%" style="display: block; margin: auto;" /&gt;
+.footnote[Source:https://vas3k.com/blog/machine_learning/]
+
+---
+
+&lt;img src="images/7w1.jpg" width="90%" style="display: block; margin: auto;" /&gt;
+.footnote[Source:https://vas3k.com/blog/machine_learning/]
+
+---
+class: center,middle
+![alt text](images/machine_learning.png)
+
+.footnote[reference=@xkcd]
+
+
+---
+class: center,middle
+## A wise man once said "Just because you have a bag of hammers does not make every problem a nail"
+
+---
+name: novice
+class: inverse,center
+
+# Goals of this presentation
+
+--
+
+## -explain key concepts of tidymodels
+
+--
+
+## -use tidymodels and its companion packages to produce output for a ML regression model 
+
+--
+
+## -illustrate with R code how to program the workflow sequence for ML models  
+
+
+---
+name: novice1
+class: inverse
+
+## Assumptions behind this talk
+
+###  -Have a working knowledge of the R language
+  
+###  -Are somewhat familiar with machine learning material
+
+---
+
+## A word about tidymodels within the tidyverse 
+
+&lt;img src="images/ds.png" width="95%" style="display: block; margin: auto;" /&gt;
+.footnote[https://rviews.rstudio.com/2019/06/19/a-gentle-intro-to-tidymodels/]
+
+---
+
+##  An extra bit of motivation for Tidymodels
+
+### "Whether you are just starting out today or have years of experience with modeling, tidymodels offers a consistent, flexible framework for your work." 
+
+From - *Max Kuhn* originator of both 'tidymodels' and the 'carets' package in R
+
+or
+
+### The &lt;b&gt;tidymodels&lt;/b&gt; ecosystem bundles together a set of packages that work hand in hand to solve machine-learning problems from start to end. Together with the data-wrangling facilities in the &lt;b&gt;tidyverse&lt;/b&gt; and the plotting tools from &lt;b&gt;ggplot2&lt;/b&gt;, this makes for a rich toolbox for every data scientist working with R. (Hansjörg Plieninger, Blog, Feb. 2020)
+
+
+---
+
+&lt;img src="images/slide1.png" width="95%" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+&lt;img src="images/slide2.png" width="95%" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+&lt;img src="images/slide3.png" width="95%" style="display: block; margin: auto;" /&gt;
+
+---
+## Other important packages
+
+&lt;img src="images/slide4a.png" width="95%" /&gt;
+
+
+---
+class:center,middle
+
+## Learn more about the tidymodels packages and the metapackage itself please go to the following sites: 
+ &lt;https://www.tidymodels.org/&gt;       
+ &lt;https://tidymodels.github.io/tidymodels/&gt;
+
+
+---
+
+## **Getting set up**
+### First we need to load some libraries: tidymodels and tidyverse.
+
+#### load the relevant tidymodels libraries
+
+
+```r
+library("tidymodels")
+library("tidyverse")
+```
+
+If you don’t already have the tidymodels library (or any of the other libraries) installed, then you’ll need to install it (once only) using   
+**install.packages("tidymodels")** 
+
+---
+
+### Loaded Packages in the 'tidyverse' and 'tidymodels' ecosystem
+
+####library(tidyverse)
+  -- Attaching packages -------------tidyverse  1.3.0 --
+  &lt;br&gt;ggplot2 3.3.2&amp;emsp;purrr   0.3.4
+  &lt;br&gt;tibble  3.0.3&amp;emsp;dplyr   1.0.0
+  &lt;br&gt;tidyr   1.1.0&amp;emsp;stringr 1.4.0
+  &lt;br&gt;readr   1.3.1&amp;emsp;forcats 0.5.0
+
+####library(tidymodels)
+ -- Attaching packages --------------tidymodels  0.1.1 --
+  &lt;br&gt;broom     0.7.0&amp;emsp;recipes   0.1.13
+  &lt;br&gt;dials     0.0.8&amp;emsp;rsample   0.0.7 
+  &lt;br&gt;infer     0.5.3&amp;emsp;tune      0.1.1 
+  &lt;br&gt;modeldata 0.0.2&amp;emsp;workflows 0.1.2 
+  &lt;br&gt;parsnip   0.1.2&amp;emsp;yardstick 0.0.7
+  
+  
+
+---
+
+## Loading the data
+
+We’ll be using the Ames Housing dataset which contains 81 variables and 2930 observations and our dependent variable/target outcome is **Sale_Price**. Obviously, in an actual analysis we would spend much more time exploring this dataset, but for sole purpose of demonstrating the {tidymodels} workflow, we’ll just perform a variety of preprocessing, throw a relatively simple model at the data, use cross-validation and then tune the model.
+
+
+```r
+data(ames, package = "modeldata")
+```
+
+---
+
+### Ames, Iowa
+&lt;img src="images/ames_map.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+.footnote[Source: Max Kuhn &amp; Davis Vaughan https://github.com/rstudio-conf-2020/applied-ml/blob/master/Part_1.pdf]
+
+
+---
+
+## First look at the data
+
+```r
+ nrow(ames)
+```
+
+```
+## [1] 2930
+```
+
+```r
+ ncol(ames)
+```
+
+```
+## [1] 81
+```
+
+
+---
+### Another look: Column names   
+
+```r
+head(colnames(ames), n=69)
+##  [1] "MS_SubClass"        "MS_Zoning"          "Lot_Frontage"      
+##  [4] "Lot_Area"           "Street"             "Alley"             
+##  [7] "Lot_Shape"          "Land_Contour"       "Utilities"         
+## [10] "Lot_Config"         "Land_Slope"         "Neighborhood"      
+## [13] "Condition_1"        "Condition_2"        "Bldg_Type"         
+## [16] "House_Style"        "Overall_Qual"       "Overall_Cond"      
+## [19] "Year_Built"         "Year_Remod_Add"     "Roof_Style"        
+## [22] "Roof_Matl"          "Exterior_1st"       "Exterior_2nd"      
+## [25] "Mas_Vnr_Type"       "Mas_Vnr_Area"       "Exter_Qual"        
+## [28] "Exter_Cond"         "Foundation"         "Bsmt_Qual"         
+## [31] "Bsmt_Cond"          "Bsmt_Exposure"      "BsmtFin_Type_1"    
+## [34] "BsmtFin_SF_1"       "BsmtFin_Type_2"     "BsmtFin_SF_2"      
+## [37] "Bsmt_Unf_SF"        "Total_Bsmt_SF"      "Heating"           
+## [40] "Heating_QC"         "Central_Air"        "Electrical"        
+## [43] "First_Flr_SF"       "Second_Flr_SF"      "Low_Qual_Fin_SF"   
+## [46] "Gr_Liv_Area"        "Bsmt_Full_Bath"     "Bsmt_Half_Bath"    
+## [49] "Full_Bath"          "Half_Bath"          "Bedroom_AbvGr"     
+## [52] "Kitchen_AbvGr"      "Kitchen_Qual"       "TotRms_AbvGrd"     
+## [55] "Functional"         "Fireplaces"         "Fireplace_Qu"      
+## [58] "Garage_Type"        "Garage_Finish"      "Garage_Cars"       
+## [61] "Garage_Area"        "Garage_Qual"        "Garage_Cond"       
+## [64] "Paved_Drive"        "Wood_Deck_SF"       "Open_Porch_SF"     
+## [67] "Enclosed_Porch"     "Three_season_porch" "Screen_Porch"
+```
+
+
+   
+---
+   
+### An another look: Data types &amp; values   
+
+```r
+glimpse(ames)
+## Rows: 2,930
+## Columns: 81
+## $ MS_SubClass        &lt;fct&gt; One_Story_1946_and_Newer_All_Styles, One_Story_1...
+## $ MS_Zoning          &lt;fct&gt; Residential_Low_Density, Residential_High_Densit...
+## $ Lot_Frontage       &lt;dbl&gt; 141, 80, 81, 93, 74, 78, 41, 43, 39, 60, 75, 0, ...
+## $ Lot_Area           &lt;int&gt; 31770, 11622, 14267, 11160, 13830, 9978, 4920, 5...
+## $ Street             &lt;fct&gt; Pave, Pave, Pave, Pave, Pave, Pave, Pave, Pave, ...
+## $ Alley              &lt;fct&gt; No_Alley_Access, No_Alley_Access, No_Alley_Acces...
+## $ Lot_Shape          &lt;fct&gt; Slightly_Irregular, Regular, Slightly_Irregular,...
+## $ Land_Contour       &lt;fct&gt; Lvl, Lvl, Lvl, Lvl, Lvl, Lvl, Lvl, HLS, Lvl, Lvl...
+## $ Utilities          &lt;fct&gt; AllPub, AllPub, AllPub, AllPub, AllPub, AllPub, ...
+## $ Lot_Config         &lt;fct&gt; Corner, Inside, Corner, Corner, Inside, Inside, ...
+## $ Land_Slope         &lt;fct&gt; Gtl, Gtl, Gtl, Gtl, Gtl, Gtl, Gtl, Gtl, Gtl, Gtl...
+## $ Neighborhood       &lt;fct&gt; North_Ames, North_Ames, North_Ames, North_Ames, ...
+## $ Condition_1        &lt;fct&gt; Norm, Feedr, Norm, Norm, Norm, Norm, Norm, Norm,...
+## $ Condition_2        &lt;fct&gt; Norm, Norm, Norm, Norm, Norm, Norm, Norm, Norm, ...
+## $ Bldg_Type          &lt;fct&gt; OneFam, OneFam, OneFam, OneFam, OneFam, OneFam, ...
+## $ House_Style        &lt;fct&gt; One_Story, One_Story, One_Story, One_Story, Two_...
+## $ Overall_Qual       &lt;fct&gt; Above_Average, Average, Above_Average, Good, Ave...
+## $ Overall_Cond       &lt;fct&gt; Average, Above_Average, Above_Average, Average, ...
+## $ Year_Built         &lt;int&gt; 1960, 1961, 1958, 1968, 1997, 1998, 2001, 1992, ...
+## $ Year_Remod_Add     &lt;int&gt; 1960, 1961, 1958, 1968, 1998, 1998, 2001, 1992, ...
+## $ Roof_Style         &lt;fct&gt; Hip, Gable, Hip, Hip, Gable, Gable, Gable, Gable...
+## $ Roof_Matl          &lt;fct&gt; CompShg, CompShg, CompShg, CompShg, CompShg, Com...
+## $ Exterior_1st       &lt;fct&gt; BrkFace, VinylSd, Wd Sdng, BrkFace, VinylSd, Vin...
+## $ Exterior_2nd       &lt;fct&gt; Plywood, VinylSd, Wd Sdng, BrkFace, VinylSd, Vin...
+## $ Mas_Vnr_Type       &lt;fct&gt; Stone, None, BrkFace, None, None, BrkFace, None,...
+## $ Mas_Vnr_Area       &lt;dbl&gt; 112, 0, 108, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0...
+## $ Exter_Qual         &lt;fct&gt; Typical, Typical, Typical, Good, Typical, Typica...
+## $ Exter_Cond         &lt;fct&gt; Typical, Typical, Typical, Typical, Typical, Typ...
+## $ Foundation         &lt;fct&gt; CBlock, CBlock, CBlock, CBlock, PConc, PConc, PC...
+## $ Bsmt_Qual          &lt;fct&gt; Typical, Typical, Typical, Typical, Good, Typica...
+## $ Bsmt_Cond          &lt;fct&gt; Good, Typical, Typical, Typical, Typical, Typica...
+## $ Bsmt_Exposure      &lt;fct&gt; Gd, No, No, No, No, No, Mn, No, No, No, No, No, ...
+## $ BsmtFin_Type_1     &lt;fct&gt; BLQ, Rec, ALQ, ALQ, GLQ, GLQ, GLQ, ALQ, GLQ, Unf...
+## $ BsmtFin_SF_1       &lt;dbl&gt; 2, 6, 1, 1, 3, 3, 3, 1, 3, 7, 7, 1, 7, 3, 3, 1, ...
+## $ BsmtFin_Type_2     &lt;fct&gt; Unf, LwQ, Unf, Unf, Unf, Unf, Unf, Unf, Unf, Unf...
+## $ BsmtFin_SF_2       &lt;dbl&gt; 0, 144, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1120...
+## $ Bsmt_Unf_SF        &lt;dbl&gt; 441, 270, 406, 1045, 137, 324, 722, 1017, 415, 9...
+## $ Total_Bsmt_SF      &lt;dbl&gt; 1080, 882, 1329, 2110, 928, 926, 1338, 1280, 159...
+## $ Heating            &lt;fct&gt; GasA, GasA, GasA, GasA, GasA, GasA, GasA, GasA, ...
+## $ Heating_QC         &lt;fct&gt; Fair, Typical, Typical, Excellent, Good, Excelle...
+## $ Central_Air        &lt;fct&gt; Y, Y, Y, Y, Y, Y, Y, Y, Y, Y, Y, Y, Y, Y, Y, Y, ...
+## $ Electrical         &lt;fct&gt; SBrkr, SBrkr, SBrkr, SBrkr, SBrkr, SBrkr, SBrkr,...
+## $ First_Flr_SF       &lt;int&gt; 1656, 896, 1329, 2110, 928, 926, 1338, 1280, 161...
+## $ Second_Flr_SF      &lt;int&gt; 0, 0, 0, 0, 701, 678, 0, 0, 0, 776, 892, 0, 676,...
+## $ Low_Qual_Fin_SF    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
+## $ Gr_Liv_Area        &lt;int&gt; 1656, 896, 1329, 2110, 1629, 1604, 1338, 1280, 1...
+## $ Bsmt_Full_Bath     &lt;dbl&gt; 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, ...
+## $ Bsmt_Half_Bath     &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
+## $ Full_Bath          &lt;int&gt; 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 3, ...
+## $ Half_Bath          &lt;int&gt; 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, ...
+## $ Bedroom_AbvGr      &lt;int&gt; 3, 2, 3, 3, 3, 3, 2, 2, 2, 3, 3, 3, 3, 2, 1, 4, ...
+## $ Kitchen_AbvGr      &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+## $ Kitchen_Qual       &lt;fct&gt; Typical, Typical, Good, Excellent, Typical, Good...
+## $ TotRms_AbvGrd      &lt;int&gt; 7, 5, 6, 8, 6, 7, 6, 5, 5, 7, 7, 6, 7, 5, 4, 12,...
+## $ Functional         &lt;fct&gt; Typ, Typ, Typ, Typ, Typ, Typ, Typ, Typ, Typ, Typ...
+## $ Fireplaces         &lt;int&gt; 2, 0, 0, 2, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, ...
+## $ Fireplace_Qu       &lt;fct&gt; Good, No_Fireplace, No_Fireplace, Typical, Typic...
+## $ Garage_Type        &lt;fct&gt; Attchd, Attchd, Attchd, Attchd, Attchd, Attchd, ...
+## $ Garage_Finish      &lt;fct&gt; Fin, Unf, Unf, Fin, Fin, Fin, Fin, RFn, RFn, Fin...
+## $ Garage_Cars        &lt;dbl&gt; 2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, ...
+## $ Garage_Area        &lt;dbl&gt; 528, 730, 312, 522, 482, 470, 582, 506, 608, 442...
+## $ Garage_Qual        &lt;fct&gt; Typical, Typical, Typical, Typical, Typical, Typ...
+## $ Garage_Cond        &lt;fct&gt; Typical, Typical, Typical, Typical, Typical, Typ...
+## $ Paved_Drive        &lt;fct&gt; Partial_Pavement, Paved, Paved, Paved, Paved, Pa...
+## $ Wood_Deck_SF       &lt;int&gt; 210, 140, 393, 0, 212, 360, 0, 0, 237, 140, 157,...
+## $ Open_Porch_SF      &lt;int&gt; 62, 0, 36, 0, 34, 36, 0, 82, 152, 60, 84, 21, 75...
+## $ Enclosed_Porch     &lt;int&gt; 0, 0, 0, 0, 0, 0, 170, 0, 0, 0, 0, 0, 0, 0, 0, 0...
+## $ Three_season_porch &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
+## $ Screen_Porch       &lt;int&gt; 0, 120, 0, 0, 0, 0, 0, 144, 0, 0, 0, 0, 0, 0, 14...
+## $ Pool_Area          &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
+## $ Pool_QC            &lt;fct&gt; No_Pool, No_Pool, No_Pool, No_Pool, No_Pool, No_...
+## $ Fence              &lt;fct&gt; No_Fence, Minimum_Privacy, No_Fence, No_Fence, M...
+## $ Misc_Feature       &lt;fct&gt; None, None, Gar2, None, None, None, None, None, ...
+## $ Misc_Val           &lt;int&gt; 0, 0, 12500, 0, 0, 0, 0, 0, 0, 0, 0, 500, 0, 0, ...
+## $ Mo_Sold            &lt;int&gt; 5, 6, 6, 4, 3, 6, 4, 1, 3, 6, 4, 3, 5, 2, 6, 6, ...
+## $ Year_Sold          &lt;int&gt; 2010, 2010, 2010, 2010, 2010, 2010, 2010, 2010, ...
+## $ Sale_Type          &lt;fct&gt; WD , WD , WD , WD , WD , WD , WD , WD , WD , WD ...
+## $ Sale_Condition     &lt;fct&gt; Normal, Normal, Normal, Normal, Normal, Normal, ...
+## $ Sale_Price         &lt;int&gt; 215000, 105000, 172000, 244000, 189900, 195500, ...
+## $ Longitude          &lt;dbl&gt; -93.61975, -93.61976, -93.61939, -93.61732, -93....
+## $ Latitude           &lt;dbl&gt; 42.05403, 42.05301, 42.05266, 42.05125, 42.06090...
+```
+
+
+---
+
+## Take a look at some data plots - an example of potential one predictor variable
+
+.center[Living Area]
+
+&lt;img src="slides_open1_files/figure-html/plot1-1.png" width="360" style="display: block; margin: auto;" /&gt;&lt;img src="slides_open1_files/figure-html/plot1-2.png" width="360" style="display: block; margin: auto;" /&gt;
+
+.center[Living Area vs Sale Price]
+
+---
+
+## We could use all the variables but for this example I am only using two
+
+&lt;img src="slides_open1_files/figure-html/plot1a-1.png" width="360" style="display: block; margin: auto;" /&gt;&lt;img src="slides_open1_files/figure-html/plot1a-2.png" width="360" style="display: block; margin: auto;" /&gt;
+
+---
+
+
+## The response/target variable (Sales Price) we want to predict
+  
+&lt;img src="slides_open1_files/figure-html/plot2-1.png" width="360" style="display: block; margin: auto;" /&gt;&lt;img src="slides_open1_files/figure-html/plot2-2.png" width="360" style="display: block; margin: auto;" /&gt;
+
+.center[(log10 transform)]
+
+---
+
+### Focus variables
+
+```
+## # A tibble: 5 x 3
+##   Latitude Longitude Sale_Price
+##      &lt;dbl&gt;     &lt;dbl&gt;      &lt;int&gt;
+## 1     42.1     -93.6     215000
+## 2     42.1     -93.6     105000
+## 3     42.1     -93.6     172000
+## 4     42.1     -93.6     244000
+## 5     42.1     -93.6     189900
+```
+
+
+---
+
+&lt;img src="images/aml_kuhn.png" width="90%" style="display: block; margin: auto;" /&gt;
+.footnote[Source: Max Kuhn &amp; Davis Vaughan https://github.com/rstudio-conf-2020/applied-ml/blob/master/Part_1.pdf]
+
+---
+
+## Now we start the modelling workflow-
+
+--
+##   First we want to split the data into a training set and a test set
+--
+
+##     For that we use the Tidymodels package "rsample"
+
+
+---
+
+&lt;img src="images/predicting.006.jpeg" width="100%" style="display: block; margin: auto;" /&gt;
+.footnote[Source:https://alison.rbind.io/post/2019-12-23-learning-to-teach-machines-to-learn/]
+
+
+---
+## .center[**Data Partitioning**]
+ Use the package "rsample"&lt;img src="images/rsample.png" align="right" width=7% class="title-hex"&gt;
+
+
+```r
+set.seed(7014) #for reproducability
+ames_split &lt;- initial_split(ames, prop = .70)
+#prop defines the amount of split
+ames_split
+```
+
+```
+## &lt;Training/Validation/Total&gt;
+## &lt;2051/879/2930&gt;
+```
+
+```r
+ames_train &lt;- training(ames_split)
+#
+ames_cv &lt;- vfold_cv(ames_train)# for later to do cross-validation
+```
+
+
+---
+## Next step - Define a recipe
+### Recipes allow you to specify the role of each variable as an outcome or a predictor variable (using a “formula”), and any preprocessing steps you want to conduct (such as transforms, normalization, imputation, PCA, etc)
+
+
+---
+## Creating a recipe has two parts:
+### 1. Specify the formula (recipe()): specify the outcome variable and predictor variables.
+### 2. Specify preprocessing steps (step_*()): define the preprocessing steps,such as   imputation, creating dummy variables, scaling, and more
+
+
+---
+
+## .center[**Preprocessing**]
+Use the package "recipes"&lt;img src="images/recipes.png" align="right" width=7% class="title-hex"&gt;
+
+```r
+mod_rec &lt;-
+  recipe(Sale_Price ~ Longitude + Latitude,
+                  data = ames_train) %&gt;%
+  step_log(Sale_Price, base = 10)
+```
+
+
+---
+## We could have use many more variables with much more prepossessing as this recipe shows:
+
+ames_rec &lt;-
+  recipe(Sale_Price ~ ., data = ames_train)  %&gt;% 
+  
+  step_log(Sale_Price, base = 10)  %&gt;%       
+  step_YeoJohnson(Lot_Area, Gr_Liv_Area)  %&gt;%   
+  step_other(Neighborhood, threshold = .1)  %&gt;%  
+  step_dummy(all_nominal()) %&gt;%  
+  step_zv(all_predictors()) %&gt;%  
+  step_ns(Longitude, deg_free = tune("lon")) %&gt;%  
+  step_ns(Latitude, deg_free = tune("lat"))
+  
+#### The full list of preprocessing steps available can be found here:
+&lt;https://recipes.tidymodels.org/reference/index.html&gt;
+
+---
+
+###Reasons for Modifying the Data
+
+- &lt;h4&gt;Some models (K-NN, SVMs, PLS, neural networks) require that the predictor variables have the same units. Centering and scaling the predictors can be used for this purpose.&lt;/h4&gt;
+
+--
+
+- &lt;h4&gt;Other models are very sensitive to correlations between the predictors and filters or PCA signal extraction can improve the model.&lt;/h4&gt;
+
+--
+
+- &lt;h4&gt;Scaling of the predictors using a transformation can lead to a big improvements.&lt;/h4&gt;
+
+--
+
+- &lt;h4&gt; Many models cannot cope with missing data so imputation strategies might be necessary.&lt;/h4&gt;
+
+--
+
+- &lt;h4&gt;In some cases, the data can be encoded in a way that maximizes its effect on the model such as the date for the day of the week can be very effective for modeling air pollution data.&lt;/h4&gt;
+
+
+.footnote[Source:Max Kuhn Workshop Presentation at the 'nyr-2020' Meeting, August 2020]
+
+---
+
+## .center[**Model Training &amp; Tuning**]
+
+## **Parsnip** offers a unified interface for the "massive" variety of models that exist in R.
+
+## This means that you only have to learn one way of specifying a model, and you can use this specification and have it generate a linear model, a random forest model, a support vector machine model, and more with only a few lines of code.
+
+
+---
+
+## Specifying the model:
+
+## 1) *The model type*: what kind of model you want to fit, set with different function of the specific model, such as rand_forest() for random forest, logistic_reg() for logistic regression etc.
+
+## 2) *The engine*: the underlying package the model should come from (e.g.*ranger* for the ranger implementation of Random Forest), set using *set_engine()*.
+
+
+
+---
+
+## 3) *The mode*: the type of prediction - since several packages can do both classification (binary/categorical prediction) and regression (continuous prediction), set using *set_mode()*.
+
+## 4) *The arguments*: the model parameter values (now consistently named across different models), set using *set_args()*.
+
+
+---
+
+&lt;img src="images/predicting.007.jpeg" width="100%" style="display: block; margin: auto;" /&gt;
+.footnote[Source:https://alison.rbind.io/post/2019-12-23-learning-to-teach-machines-to-learn/]
+
+
+---
+
+## A list of models accessible via **parsnip**
+
+### The mode of a model is related to its goal-*regression* and *classification*
+
+### common models: boost_tree(), decision_tree(),  mars(), mlp(), nearest_neighbor(),         rand_forest(), svm_poly(), svm_rbf(), ...
+
+### classification: logistic_reg(),multinom_reg()
+### regression: linear_reg(), surv_reg()
+
+Source: vignettes/articles/Models.Rmd
+
+####For more of a complete list please see:
+&lt;https://www.tidymodels.org/find/parsnip/&gt;
+
+---
+
+Use "parsnip"&lt;img src="images/parsnip.png" align="right" width=7% class="title-hex"&gt;
+
+####We can easily fit a 5-nearest neighbor model with the following code:
+
+
+```r
+fit_knn &lt;- 
+  nearest_neighbor(mode = "regression", neighbors = 5) %&gt;%
+  set_engine("kknn") %&gt;% 
+  fit(log10(Sale_Price) ~ Longitude + Latitude, data = ames_train)
+fit_knn
+```
+
+```
+## parsnip model object
+## 
+## Fit time:  40ms 
+## 
+## Call:
+## kknn::train.kknn(formula = log10(Sale_Price) ~ Longitude + Latitude,     data = data, ks = ~5)
+## 
+## Type of response variable: continuous
+## minimal mean absolute error: 0.07027179
+## Minimal mean squared error: 0.009850297
+## Best kernel: optimal
+## Best k: 5
+```
+
+---
+
+### A few words about kNN - nearest neighbor model
+
+#### k-nearest neighbor is a relatively simple supervised algorithm where each observation is predicted based on its "similarity" to its nearest neighbors. Its particular strengths are:
+
+####1) the algorithm is easy to understand which enables better interpretation of your results
+####2) it makes no assumptions about the data, such as its distributional form
+####3) it may not provide the best prediction accuracy but it works well for a wide variety of datasets
+####4) it can be very useful for preprocessing purposes
+
+
+---
+
+Use "parsnip"&lt;img src="images/parsnip.png" align="right" width=7% class="title-hex"&gt;
+
+### Define a knn regression model with the tuning parameters empty for later tuning.
+
+
+```r
+knn_mod &lt;-
+  #specify the model as nearest neighbor
+  nearest_neighbor() %&gt;%
+  #set tuning parameters-we chose 2 from the knn model - no. of neighbors
+  #and distance exponent
+  set_args(neighbors = tune(),dist_power = tune()) %&gt;%
+  # set R package that is associated with the model
+  set_engine("kknn")%&gt;%
+  set_mode("regression")
+```
+
+
+
+---
+
+##  .center[**Putting it all together with workflow**]
+
+### Now I am going to diverge from the modelling steps I showed during the introduction.
+
+### This is to introduce a new package entitled "workflow".
+
+#### `*workflow*` is a package that can bundle together your preprocessing, modeling, and post processing requests. For example, you don’t have to keep track of separate objects in your workspace and model fitting can be executed using a single call to *fit()*.
+
+
+---
+
+Use "workflow"&lt;img src="images/workflows.png" align="right" width=7% class="title-hex"&gt;
+### Construct a workflow that combines your recipe and your model
+
+
+```r
+ml_wflow &lt;-
+  workflow() %&gt;%
+  #add the recipe
+  add_recipe(mod_rec) %&gt;%
+  #add the model
+  add_model(knn_mod)
+```
+
+
+---
+
+## .center[**Tune the hyperparameters**]
+
+### We need to tune the model (i.e. choose the hyperparameter value(s) that leads to the best performance) before fitting our final model. If there are no hyperparameters to tune, you can skip this step.
+
+### In this example, we will do the tuning using the vfold cross-validation (vfold=10) object that we created previously then specify the range for k neighbors and distanced squared exponent after which we add a tuning layer to our workflow using the function *tune_grid()*
+
+---
+
+### 10 fold cross validation example
+&lt;img src="images/cv-plot.svg" width="90%" style="display: block; margin: auto;" /&gt;
+.footnote[Source:Max Kuhn &amp; Davis Vaughan        https://github.com/rstudio-conf-2020/applied-ml/blob/master/Part_4.pdf]
+
+---
+
+&lt;img src="images/resampling.svg" width="90%" style="display: block; margin: auto;" /&gt;
+.footnote[source:&lt;https://rviews.rstudio.com/2020/04/21/the-case-for-tidymodels/&gt;]
+
+
+---
+
+## Use "tune" and "yardstick" package to find best model
+&lt;img src="images/yardstick.png" align="right" width=7% class="title-hex"&gt;
+&lt;img src="images/tune.png" align="right" width=7% class="title-hex"&gt;
+
+### Objective: find the best model 
+
+```r
+ml_wflow_tune &lt;-
+  ml_wflow %&gt;%
+  tune_grid(resamples = ames_cv, # cv object
+                  grid = 10, # grid values
+                  metrics = metric_set(rmse)) # performance metric of interest
+```
+
+---
+
+&lt;img src="images/grid-plot.svg" width="75%" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+class:center,middle
+&lt;img src="images/tidymodels1a.svg" style="display: block; margin: auto;" /&gt;
+
+.footnote[&lt;https://rviews.rstudio.com/2019/06/19/a-gentle-intro-to-tidymodels/&gt;]
+
+
+---
+
+# .center[A word about yardstick]
+
+## **yardstick** is a package to estimate how well models are working 
+### There are a large number of different metrics that one can use for assessment. The three main groups are: 
+
+#### 1) *class metrics*, such as accuracy, sensitivity, kappa matrix ...,
+
+#### 2) *probability metrics* such as, area under the receiver operator curve(ROC)...,
+
+#### 3) *regression metrics* that has root mean squared error, R^2, mean absolute error and many more. 
+
+####For a complete list of metric choices please see:
+&lt;https://tidymodels.github.io/yardstick/reference/index.html&gt;
+
+---
+
+### collecting the results of the tuning
+
+
+
+```r
+res  &lt;- ml_wflow_tune %&gt;%
+  collect_metrics()
+```
+
+---
+
+## printing the results
+
+
+```r
+res
+```
+
+```
+## # A tibble: 10 x 7
+##    neighbors dist_power .metric .estimator   mean     n std_err
+##        &lt;int&gt;      &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
+##  1         1     1.16   rmse    standard   0.121     10 0.00519
+##  2         3     0.0548 rmse    standard   0.110     10 0.00507
+##  3         4     1.32   rmse    standard   0.102     10 0.00452
+##  4         6     1.50   rmse    standard   0.0988    10 0.00451
+##  5         7     0.530  rmse    standard   0.0979    10 0.00484
+##  6         8     0.227  rmse    standard   0.0993    10 0.00486
+##  7        10     0.866  rmse    standard   0.0980    10 0.00493
+##  8        12     0.387  rmse    standard   0.0985    10 0.00491
+##  9        13     0.659  rmse    standard   0.0982    10 0.00493
+## 10        14     1.00   rmse    standard   0.0989    10 0.00496
+```
+
+---
+### Plot performance over iterations for cross-validation
+
+
+```r
+autoplot(ml_wflow_tune, metric = "rmse")
+```
+
+&lt;img src="slides_open1_files/figure-html/iter-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## **Finalize the workflow**
+
+### Now need to add a layer to our workflow that adds the tuned parameter, i.e. k neighbors for the value that yielded the best results.
+### We extract the best value for the accuracy metric by applying the *select_best()* function to the tune object.
+
+---
+
+## Select best parameters
+
+
+```r
+best_params &lt;-
+  ml_wflow_tune %&gt;%
+  select_best(metric = "rmse")
+```
+
+## Finalize workflow
+
+
+```r
+# Now add this parameter (best_params) to the workflow using the
+# finalize_workflow() function.
+ames_reg_res &lt;-
+  ml_wflow %&gt;%
+  finalize_workflow(best_params)
+```
+
+---
+
+&lt;img src="images/predicting.008.jpeg" width="95%" style="display: block; margin: auto;" /&gt;
+.footnote[Source:https://alison.rbind.io/post/2019-12-23-learning-to-teach-machines-to-learn/]
+
+
+---
+
+## .center[**Fit the final model**]
+
+## Now that we’ve defined our recipe, our model, and tuned the model’s parameters, we’re ready to actually fit the final model. Since all of this information is contained within the workflow object, we just apply the *last_fit()* function to our workflow and the train/test split object. This will automatically train the model specified by the workflow using the training data, and produce evaluations based on the *test* set.
+
+
+---
+
+## Fit using the entire training data
+
+
+```r
+ames_wfl_fit &lt;- ames_reg_res %&gt;%
+  last_fit(ames_split)
+```
+
+
+---
+
+&lt;img src="images/predicting.009.jpeg" width="95%" style="display: block; margin: auto;" /&gt;
+.footnote[Source:https://alison.rbind.io/post/2019-12-23-learning-to-teach-machines-to-learn/]
+
+
+---
+
+## .center[**Test Performance**]
+
+### Since we supplied the train/test object when we fit the workflow object, the metrics are evaluated on the test set. Now when we use the *collect_metrics()* function, it extracts the performance of the final model (since *ames_wfl_fit* now consists of a single final model) applied to the test set.
+
+```r
+test_performance &lt;- ames_wfl_fit %&gt;% 
+  collect_metrics()
+test_performance #print the results
+```
+
+```
+## # A tibble: 2 x 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 rmse    standard      0.0959
+## 2 rsq     standard      0.703
+```
+
+---
+
+## extract the test set predictions themselves
+
+
+```r
+test_predictions &lt;- ames_wfl_fit %&gt;% 
+  collect_predictions()
+test_predictions #print the results
+```
+
+```
+## # A tibble: 879 x 4
+##    id               .pred  .row Sale_Price
+##    &lt;chr&gt;            &lt;dbl&gt; &lt;int&gt;      &lt;dbl&gt;
+##  1 train/test split  5.17     3       5.24
+##  2 train/test split  5.27     5       5.28
+##  3 train/test split  5.27     6       5.29
+##  4 train/test split  5.31     9       5.37
+##  5 train/test split  5.26    11       5.25
+##  6 train/test split  5.24    12       5.27
+##  7 train/test split  5.22    14       5.23
+##  8 train/test split  5.66    16       5.73
+##  9 train/test split  5.15    24       5.17
+## 10 train/test split  5.17    25       5.18
+## # ... with 869 more rows
+```
+
+---
+
+&lt;img src="slides_open1_files/figure-html/plotfinal-1.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+---
+class: center,middle
+
+## The results of the model performance are not great but remember in this example we only used 2 predictors (longitude and latitude) which accounted for ~70% of the variance. In some ways the real job of modelling house sale prices starts now!
+
+
+---
+
+## Finally to sum up a tidymodels workflow
+&lt;img src="images/finalflow.svg" width="90%" style="display: block; margin: auto;" /&gt;
+.footnote[Source: Max Kuhn &amp; Davis Vaughan https://github.com/rstudio-conf-2020/applied-ml/blob/master/Part_3.pdf]
+
+
+---
+
+###A test-Match tasks to packages
+
+.pull-left[- Fit a K-NN model
+
+- Extract holidays from dates
+
+- Make a training/test split
+
+- Bundle a recipe and model
+
+- Is high in vitamin A
+
+- Compute R2
+
+- Bin a predictor (but seriously,...don't)
+
+]
+
+.pull-right[
+
+- workflows
+
+- yardstick
+
+- carrot
+
+- recipes
+
+- parsnip
+
+- rsample
+
+- ggvis
+
+]
+
+.footnote[Source:Max Kuhn Workshop Presentation at the 'nyr-2020' Meeting, August 2020]
+
+---
+
+## .center[For more information and code you can find examples of these topic on my Github site]
+
+- build another kNN model but with different predictors in addition build a random forest   model and lasso model
+
+- compare the different model results for the Ames data
+
+- look more deeply into cross-validation techniques and other methods of tuning             hyperparameters
+  
+- also we investigate the implications of the bias-variance tradeoff and the problem of     overfitting
+  
+- discuss aspects of model performance assessment in relation to a TidyTuesday              dataset-global volcano data. You can run this with the supplied Rmd file.
+
+
+---
+
+# .center[Some references you might find useful]
+
+### - Boehmke, B. and Greenwell, B., 2020: Hands-On Machine Learning with R, CRC Press,         NY.
+
+### - Burkov, A., 2019: The Hundred-Page Machine Learning Book, self-published,(email:          author@thermlbook.com)
+      
+### - Rhys, H., 2020: Machine Learning with R, the tidyverse and mlr, Manning, Shelter          Island
+
+---
+
+##Further Resources
+
+#### * For further information about each of the tidymodels packages, I recommend the vignettes/articles on the respective package homepage: (e.g., https://tidymodels.github.io/recipes/ or https://tune.tidymodels.org/articles/getting_started.html).
+
+#### * Variable importance (plots) are provided by the package 'vip', which works well in combination with tidymodels packages.
+
+#### * Recipe steps for dealing with unbalanced data are provided by the 'themis' package.There are a few more tidymodels packages that are not cover herein, like 'infer' or 'embed'. Read more about these and other packages at https://tidymodels.tidymodels.org/.
+
+#### * Also see my slide deck "Deeper Dive into Tidymodels for Machine Learning in R" and the Rmd file (pdf too) "Multinomial classification with tidymodels and TidyTuesday volcano data" in my github account. (github.com/jelewis and repository:OpenGeoHubSlides2)
+
+---
+## In space, no one can hear you scream.
+
+   – Alien (1979)
+
+Luckily tidymodels is a friendlier place. Ease of adoption and ease of use are fundamental design principles for the packages within the tidymodels ecosystem.
+
+
+## .center[The end]
+
+
+
+
+Thanks to Max Kuhn, Alison Hill, and Julia Silge for all the insightful material concerning 'Tidymodels' that they have made available on the internet. It has made my presentation possible.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create();
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

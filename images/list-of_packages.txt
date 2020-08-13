@@ -1,0 +1,21 @@
+The core tidymodels packages work together to enable a wide variety of modeling approaches:
+and is a meta-package that installs and load the core packages listed below that you need for modeling and machine learning.
+
+rsample provides infrastructure for efficient data splitting and resampling.
+
+parsnip is a tidy, unified interface to models that can be used to try a range of models without getting bogged down in the syntactical minutiae of the underlying packages.
+
+recipes is a tidy interface to data pre-processing tools for feature engineering. 
+
+workflows bundle your pre-processing, modeling, and post-processing together. 
+
+tune helps you optimize the hyperparameters of your model and pre-processing steps.
+
+yardstick measures the effectiveness of models using performance metrics.
+
+broom converts the information in common statistical R objects into user-friendly, predictable formats.
+
+dials creates and manages tuning parameters and parameter grids. 
+
+Learn more about the tidymodels metapackage itself at <https://tidymodels.github.io/tidymodels/>
+There are, also, a series of specialized packages but for these I'll refer you to the Tidymodels webpage...<https://www.tidymodels.org/>
